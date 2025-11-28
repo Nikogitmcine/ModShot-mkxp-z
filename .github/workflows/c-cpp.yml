@@ -65,6 +65,7 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.sys }}
+          update: true
           install: >-
             base-devel
             git
@@ -74,17 +75,6 @@ jobs:
             mingw-w64-${{ matrix.env }}-autotools
             mingw-w64-${{ matrix.env }}-cmake
             mingw-w64-${{ matrix.env }}-meson
-
-      - name: Refresh pacman mirrors (faster, more reliable)
-        shell: msys2 {0}
-        run: |
-          set -euo pipefail
-          for f in /etc/pacman.d/mirrorlist.*; do
-            [ -f "$f" ] || continue
-            cp "$f" "$f.bak"
-            printf 'Server = https://mirror.msys2.org/$repo/$arch\nServer = https://mirrors.kernel.org/sourceware/msys2/$repo/$arch\n' > "$f"
-          done
-          pacman -Syy --noconfirm --disable-download-timeout
 
       - name: Dependencies cache
         id: cache-deps
